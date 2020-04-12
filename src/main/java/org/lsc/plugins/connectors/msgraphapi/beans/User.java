@@ -56,10 +56,10 @@ public class User {
 		this.id = id;
 	}
 
-	public LscDatasets toDatasets() {
+	public LscDatasets toDatasets(String pivotInternal) {
 		LscDatasets datasets = new LscDatasets();
 		datasets.put(pivotAttribute, value);
-		datasets.put("id", id);
+		datasets.put(pivotInternal, id);
 		return datasets;
 	}
 

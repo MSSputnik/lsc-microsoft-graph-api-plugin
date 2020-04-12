@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
 public class MsGraphApiDao {
     public static final String USER_PATH = "/users";
     public static final String DEFAULT_PIVOT = "mail";
-    public static final String ID = "id";
+    public static final String DEFAULT_PIVOT_INTERNAL = "id"; // other option is userPrincipalName
     private static final Logger LOGGER = LoggerFactory.getLogger(MsGraphApiDao.class);
 
     private final Client client;
@@ -79,6 +79,7 @@ public class MsGraphApiDao {
 
     private final Optional<Integer> pageSize;
     private final String pivot;
+    private final String pivotInternal;
     private final Optional<String> filter;
     private final Optional<String> select;
 
@@ -87,6 +88,7 @@ public class MsGraphApiDao {
         this.filter = getStringParameter(serviceConfiguration.getFilter());
         this.select = getStringParameter(serviceConfiguration.getSelect());
         this.pivot = getStringParameter(serviceConfiguration.getPivot()).orElse(DEFAULT_PIVOT);
+        this.pivotInternal = getStringParameter(serviceConfiguration.getPivotInternal()).orElse(DEFAULT_PIVOT_INTERNAL);
         this.pageSize = Optional.ofNullable(serviceConfiguration.getPageSize()).filter(size -> size > 0);
         LOGGER.debug("bearer " + authorizationBearer);
         client = ClientBuilder.newClient()
@@ -97,6 +99,10 @@ public class MsGraphApiDao {
             .path(USER_PATH);
     }
 
+    public String getPivotInteral() {
+    	return this.pivotInternal;
+    }
+    
     private Optional<String> getStringParameter(String parameter) {
         return Optional.ofNullable(parameter).filter(filter -> !filter.trim().isEmpty());
     }
@@ -106,7 +112,7 @@ public class MsGraphApiDao {
     }
 
     private List<User> getUsersList(Optional<String> computedFilter) throws LscServiceException {
-        WebTarget target = pivot.equals(ID) ? usersClient.queryParam("$select", pivot) : usersClient.queryParam("$select","id," + pivot);
+        WebTarget target = pivot.equals(pivotInternal) ? usersClient.queryParam("$select", pivot) : usersClient.queryParam("$select",pivotInternal+"," + pivot);
 
         if (computedFilter.isPresent()) {
             target = target.queryParam("$filter", computedFilter.get());
@@ -130,12 +136,12 @@ public class MsGraphApiDao {
             .stream()
             .flatMap(response -> response.getValue().stream())
             .filter(this::hasPivots)
-            .map(map -> new User(pivot, map.get(pivot).toString(), map.get(ID).toString())).collect(Collectors.toList());
+            .map(map -> new User(pivot, map.get(pivot).toString(), map.get(pivotInternal).toString())).collect(Collectors.toList());
     }
 
     private boolean hasPivots(Map<String, Object> map) {
-        if (map.get(ID) == null || map.get(pivot) == null) {
-            LOGGER.warn("The entry " + map.toString() + " has no pivot '" + pivot + "' or id and has been ignored.");
+        if (map.get(pivotInternal) == null || map.get(pivot) == null) {
+            LOGGER.warn("The entry " + map.toString() + " has no pivot '" + pivot + "' or '" + pivotInternal + "' and has been ignored.");
             return false;
         }
         return true;

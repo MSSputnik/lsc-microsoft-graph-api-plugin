@@ -42,8 +42,6 @@
  */
 package org.lsc.plugins.connectors.msgraphapi;
 
-import static org.lsc.plugins.connectors.msgraphapi.MsGraphApiDao.ID;
-
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -83,7 +81,8 @@ public class MsGraphApiUsersSrcService implements IService {
     private final MsGraphApiDao dao;
     private final MsGraphApiConnectionSettings settings;
 
-    public MsGraphApiUsersSrcService(TaskType task) throws LscServiceConfigurationException {
+    @SuppressWarnings("unchecked")
+	public MsGraphApiUsersSrcService(TaskType task) throws LscServiceConfigurationException {
         try {
             if (task.getPluginSourceService().getAny() == null || task.getPluginSourceService().getAny().size() != 1 || !((task.getPluginSourceService().getAny().get(0) instanceof MsGraphApiUsersService))) {
                 throw new LscServiceConfigurationException("Unable to identify the msgraphapi service configuration " + "inside the plugin source node of the task: " + task.getName());
@@ -155,7 +154,7 @@ public class MsGraphApiUsersSrcService implements IService {
     }
 
     private IBean getBeanFromSameService(String pivotAttributeName, LscDatasets pivotAttributes, String pivotValue) throws LscServiceException {
-        String idValue = pivotAttributes.getStringValueAttribute(ID);
+        String idValue = pivotAttributes.getStringValueAttribute(dao.getPivotInteral());
         if (idValue == null) {
             return null;
         }
@@ -201,7 +200,7 @@ public class MsGraphApiUsersSrcService implements IService {
         IBean bean = beanClass.newInstance();
 
         bean.setMainIdentifier(idValue);
-        bean.setDatasets(new LscDatasets(ImmutableMap.of("id", idValue)));
+        bean.setDatasets(new LscDatasets(ImmutableMap.of(dao.getPivotInteral(), idValue)));
         return bean;
     }
 
@@ -212,7 +211,7 @@ public class MsGraphApiUsersSrcService implements IService {
 
             Map<String, LscDatasets> listPivots = new HashMap<String, LscDatasets>();
             for (User user: userList) {
-                listPivots.put(user.getValue(), user.toDatasets());
+                listPivots.put(user.getValue(), user.toDatasets(dao.getPivotInteral()));
             }
             return ImmutableMap.copyOf(listPivots);
         } catch (ProcessingException e) {

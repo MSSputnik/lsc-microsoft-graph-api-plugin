@@ -28,10 +28,21 @@
 			<xsd:complexContent>
 				<xsd:extension base="msGraphApiService">
 					<xsd:sequence>
-						<xsd:element name="filter" type="xsd:string" minOccurs="0" />
+						<xsd:element name="filter" type="xsd:string"
+							minOccurs="0" />
 						<xsd:element name="pivot" type="xsd:string" minOccurs="0" />
-						<xsd:element name="pageSize" type="xsd:int" minOccurs="0" />
-						<xsd:element name="select" type="xsd:string" minOccurs="0" />
+						<xsd:element name="pivotInternal" minOccurs="0" default="id">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="id"></xsd:enumeration>
+									<xsd:enumeration value="userPrincipalName"></xsd:enumeration>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="pageSize" type="xsd:int"
+							minOccurs="0" />
+						<xsd:element name="select" type="xsd:string"
+							minOccurs="0" />
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>

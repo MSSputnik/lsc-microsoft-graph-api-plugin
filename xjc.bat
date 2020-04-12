@@ -1,0 +1,1 @@
+"%JAVA_HOME%\bin\xjc.exe" -encoding utf-8 -p org.lsc.plugins.connectors.msgraphapi.generated -d src\main\java -extension -b lsc.episode src\main\resources\schemas\lsc-microsoft-graph-api-plugin-1.0.xsd
