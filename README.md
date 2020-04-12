@@ -36,6 +36,7 @@ The values to configure are:
 
   - `tasks.task.pluginSourceService.filter`: (Optional, default none) The filter to use for fetching the list of pivots. For the syntax to use in those filters the syntax can be found [here](https://docs.microsoft.com/en-us/graph/query-parameters#filter-parameter).
   - `tasks.task.pluginSourceService.pivot`: (Optional, default `mail`) The field to use as pivot.
+  - `tasks.task.pluginSourceService.pivotInternal`: (Optional, default `id`, values: `id` or `userPrincipalName`) The field to use as pivot internally by the MS API.
   - `tasks.task.pluginSourceService.pageSize`: (Optional, default none) The page size used to paginate the results from the graph API. Default is no page size, but the API has a `100` default page size.
   - `tasks.task.pluginSourceService.select`: (Optional, default none) The comma separated list of fields to gather when getting the details of a user. The syntax to use can be found [here](https://docs.microsoft.com/en-us/graph/query-parameters#select-parameter). By default the API returns a default set of properties.
 
